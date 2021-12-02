@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:developer';
 import 'package:demo/splash_screen.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';

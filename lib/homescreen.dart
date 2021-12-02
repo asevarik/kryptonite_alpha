@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors_in_immutables
+
 import 'package:demo/add_existing.dart';
 import 'package:demo/add_new_password.dart';
 import 'package:animated_floating_buttons/animated_floating_buttons.dart';

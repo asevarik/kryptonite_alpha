@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import, must_be_immutable, prefer_typing_uninitialized_variables, unnecessary_null_comparison
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -29,7 +31,7 @@ class _AddExistingPasswordState extends State<AddExistingPassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => log("clicked"),
+        onPressed: () {},
         // onPressed: () => log(
         //   "${usernameTextFieldContoller.text}\n ${websiteTextFieldContoller.text}\n ${passwordTextFieldContoller.text}\n",
         // ),

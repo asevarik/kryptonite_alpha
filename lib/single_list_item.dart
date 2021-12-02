@@ -1,5 +1,8 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:developer';
 
+import 'package:demo/share_password.dart';
 import 'package:flutter/material.dart';
 
 class SingleListItem extends StatefulWidget {
@@ -69,7 +72,12 @@ class _SingleListItemState extends State<SingleListItem> {
             flex: 1,
           ),
           IconButton(
-              onPressed: () => log(widget.passwordItem.websiteName),
+              onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SharePassword(),
+                    ),
+                  ),
               icon: const Icon(Icons.open_in_new))
         ],
       ),
