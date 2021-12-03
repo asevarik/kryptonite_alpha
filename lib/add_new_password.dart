@@ -1,6 +1,6 @@
-import 'dart:developer';
-
+import 'package:demo/Providers/SavedPasswordProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddNewPassword extends StatefulWidget {
   const AddNewPassword({Key? key}) : super(key: key);
@@ -10,12 +10,44 @@ class AddNewPassword extends StatefulWidget {
 }
 
 class _AddNewPasswordState extends State<AddNewPassword> {
+  TextEditingController _webSiteNameController = TextEditingController();
+  TextEditingController _userNameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  final _formkey = GlobalKey<FormState>();
+  final FocusNode _webSiteFocusNode = FocusNode();
+  final FocusNode _userNameFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
+  final FocusNode _floatingFocusNode = FocusNode();
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _webSiteFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    _floatingFocusNode.dispose();
+    _userNameFocusNode.dispose();
+    _userNameController.dispose();
+    _passwordController.dispose();
+    _webSiteNameController.dispose();
+    super.dispose();
+  }
+
+  bool? _isUpperCase = false;
+  bool? _isLowerCase = false;
+  bool? _isSpecialCase = false;
+  bool? _isUnderCase = false;
   @override
   Widget build(BuildContext context) {
-    bool? _checked = false;
+    final savedPasswordProvider = Provider.of<SavedPasswordProvider>(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => log("message"),
+        onPressed: () {
+          final isValid = _formkey.currentState!.validate();
+          if (isValid) {
+            savedPasswordProvider.addPassword(_webSiteNameController.text,
+                _userNameController.text, _passwordController.text);
+            Navigator.of(context).pop();
+          }
+        },
         child: const Icon(Icons.check),
         backgroundColor: Colors.black,
         splashColor: Colors.deepPurple,
@@ -46,6 +78,7 @@ class _AddNewPasswordState extends State<AddNewPassword> {
                   flex: 1,
                 ),
                 GestureDetector(
+                  //TODO add ontap which clears all
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -92,11 +125,19 @@ class _AddNewPasswordState extends State<AddNewPassword> {
           Padding(
             padding: const EdgeInsets.all(15.0),
             child: Form(
+              key: _formkey,
               child: Column(
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: TextFormField(
+                      key: ValueKey("websitename"),
+                      focusNode: _webSiteFocusNode,
+                      controller: _webSiteNameController,
+                      onEditingComplete: () => FocusScope.of(context)
+                          .requestFocus(_userNameFocusNode),
+                      keyboardType: TextInputType.emailAddress,
+                      // onEditingComplete
                       decoration: const InputDecoration(
                         hintText: "E.g. SquareSpace",
                         hintStyle: TextStyle(color: Colors.black38),
@@ -114,6 +155,12 @@ class _AddNewPasswordState extends State<AddNewPassword> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: TextFormField(
+                      key: ValueKey("username"),
+                      controller: _userNameController,
+                      focusNode: _userNameFocusNode,
+                      onEditingComplete: () => FocusScope.of(context)
+                          .requestFocus(_passwordFocusNode),
+                      keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(
                         hintText: "email@example.com",
                         hintStyle: TextStyle(color: Colors.black38),
@@ -131,6 +178,43 @@ class _AddNewPasswordState extends State<AddNewPassword> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: TextFormField(
+                      key: ValueKey("password"),
+                      controller: _passwordController,
+                      focusNode: _passwordFocusNode,
+                      onEditingComplete: () => FocusScope.of(context)
+                          .requestFocus(_floatingFocusNode),
+                      keyboardType: TextInputType.emailAddress,
+                      obscureText: true,
+                      validator: (String? value) {
+                        if (_isUpperCase == true) {
+                          if (!value!.contains(RegExp(r'[A-Z]'))) {
+                            return "Upper case character not present";
+                          } else {
+                            return null;
+                          }
+                        }
+                        if (_isLowerCase == true) {
+                          if (!value!.contains(RegExp(r'[a-z]'))) {
+                            return "Lower case character not present";
+                          } else {
+                            return null;
+                          }
+                        }
+                        if (_isSpecialCase == true) {
+                          if (!value!.contains(RegExp(r'[^A-Za-z0-9]'))) {
+                            return "Spe case character not present";
+                          } else {
+                            return null;
+                          }
+                        }
+                        if (_isUnderCase == true) {
+                          if (!value!.contains(RegExp(r'_'))) {
+                            return "under case character not present";
+                          } else {
+                            return null;
+                          }
+                        }
+                      },
                       decoration: const InputDecoration(
                         hintText: "********",
                         hintStyle: TextStyle(color: Colors.black38),
@@ -164,48 +248,49 @@ class _AddNewPasswordState extends State<AddNewPassword> {
           ),
 
           CheckboxListTile(
-            value: _checked,
+            value: _isUpperCase,
             title: const Text("Uppercase Characters"),
             onChanged: (bool? value) {
               setState(
                 () {
-                  _checked = value;
+                  print(value);
+                  _isUpperCase = value;
                 },
               );
             },
             controlAffinity: ListTileControlAffinity.leading,
           ),
           CheckboxListTile(
-            value: _checked,
+            value: _isLowerCase,
             title: const Text("Lowercase Characters"),
             onChanged: (bool? value) {
               setState(
                 () {
-                  _checked = value;
+                  _isLowerCase = value;
                 },
               );
             },
             controlAffinity: ListTileControlAffinity.leading,
           ),
           CheckboxListTile(
-            value: _checked,
+            value: _isUnderCase,
             title: const Text("Underscore Characters"),
             onChanged: (bool? value) {
               setState(
                 () {
-                  _checked = value;
+                  _isUnderCase = value;
                 },
               );
             },
             controlAffinity: ListTileControlAffinity.leading,
           ),
           CheckboxListTile(
-            value: _checked,
+            value: _isSpecialCase,
             title: const Text("Special Characters"),
             onChanged: (bool? value) {
               setState(
                 () {
-                  _checked = value;
+                  _isSpecialCase = value;
                 },
               );
             },

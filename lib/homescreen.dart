@@ -1,27 +1,17 @@
+import 'package:demo/Modals/Password.dart';
+import 'package:demo/Providers/SavedPasswordProvider.dart';
 import 'package:demo/add_existing.dart';
 import 'package:demo/add_new_password.dart';
 import 'package:animated_floating_buttons/animated_floating_buttons.dart';
 import 'package:demo/single_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:provider/provider.dart';
 
 import './pwnedbox.dart';
 import './password_legend.dart';
 import './all_saved_passwords_title.dart';
 import './header_bar_settings_icon.dart';
-
-class Password {
-  String userName = "";
-  String passWord = "";
-  String websiteName = "";
-  String status = "";
-
-  Password(
-      {required this.userName,
-      required this.passWord,
-      required this.status,
-      required this.websiteName});
-}
 
 final GlobalKey<AnimatedFloatingActionButtonState> key =
     GlobalKey<AnimatedFloatingActionButtonState>();
@@ -64,33 +54,12 @@ class StartHome extends StatefulWidget {
 
 class _StartHomeState extends State<StartHome> {
   static List<Password> savedPasswd = [
-    Password(
-      userName: "username@gmail.com",
-      passWord: "gmailPassword1234",
-      websiteName: "Gmail",
-      status: "compromised",
-    ),
-    Password(
-      userName: "netflixUser@gmail.com",
-      passWord: "Netflix_sbka_baap",
-      websiteName: "Netflix",
-      status: "reused",
-    ),
-    Password(
-      userName: "theManCalledSting",
-      passWord: "wooooo1234",
-      websiteName: "Steam",
-      status: "healthy",
-    ),
-    Password(
-      userName: "lord_stevens_jobs@apple.com",
-      passWord: "I_hate_android!",
-      websiteName: "Apple ID",
-      status: "healthy",
-    ),
+    
   ];
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final savedPasswordProvider = Provider.of<SavedPasswordProvider>(context);
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -155,7 +124,7 @@ class _StartHomeState extends State<StartHome> {
         ],
         actionsIconTheme: const IconThemeData(color: Colors.black87),
       ),
-      body: ListView(
+      body: Column(
         children: [
           const PwnedBox(),
           const AllPasswordTitle(),
@@ -163,15 +132,20 @@ class _StartHomeState extends State<StartHome> {
           Container(
             height: 20,
           ),
-          Column(
-            children: <Widget>[
-              for (var item in savedPasswd)
-                SingleListItem(
-                  passwordItem: item,
-                ),
-            ],
-          ),
-          // const SingleListItem(),
+          Container(
+            height: size.height / 2.5,
+            child: ListView.builder(
+                itemCount: savedPasswordProvider.getSavedPasswords.length,
+                itemBuilder: (BuildContext context, int count) {
+                  return ChangeNotifierProvider.value(
+                    value: savedPasswordProvider,
+                    child: SingleListItem(
+                      passwordItem:
+                          savedPasswordProvider.getSavedPasswords[count],
+                    ),
+                  );
+                }),
+          )
         ],
       ),
     );
