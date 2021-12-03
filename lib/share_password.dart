@@ -41,7 +41,7 @@ class SharePassword extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Text(
-                      "Clear",
+                      "Edit",
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.deepPurple,

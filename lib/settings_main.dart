@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers
+
 import 'package:demo/change_password.dart';
 import 'package:demo/manage_sync.dart';
 import 'package:flutter/material.dart';
